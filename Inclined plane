@@ -1,0 +1,15 @@
+function drawIncline(ctx, text) {
+  // Triangle
+  ctx.beginPath();
+  ctx.moveTo(100, 300);
+  ctx.lineTo(500, 300);
+  ctx.lineTo(500, 150);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Block
+  ctx.fillRect(450, 220, 40, 40);
+
+  ctx.font = "16px Arial";
+  ctx.fillText("Inclined Plane", 280, 50);
+}
