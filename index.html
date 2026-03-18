@@ -2,19 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Physics Diagram Generator</title>
-  <link rel="stylesheet" href="style.css">
+  <title>DiagramAI</title>
 </head>
-<body>
 
-  <div class="container">
-    <h1>Physics Diagram Generator</h1>
+<body style="margin:0; font-family:Segoe UI; background:#0f172a; color:white; display:flex; justify-content:center; align-items:center; height:100vh;">
 
-    <textarea id="inputText" placeholder="Enter your physics question..."></textarea>
-    <br>
-    <button onclick="generate()">Generate Diagram</button>
+  <div style="display:flex; gap:30px; width:90%; max-width:1200px;">
 
-    <canvas id="canvas" width="700" height="400"></canvas>
+    <!-- Input Panel -->
+    <div style="flex:1; padding:25px; border-radius:20px; background:rgba(255,255,255,0.05); backdrop-filter:blur(20px);">
+      
+      <h1 style="margin-bottom:5px;">DiagramAI</h1>
+      <p style="color:#94a3b8; margin-bottom:15px;">Turn physics questions into diagrams</p>
+
+      <textarea id="inputText"
+        placeholder="e.g. A block slides down a 30° incline..."
+        style="width:100%; height:120px; padding:12px; border-radius:10px; border:none; outline:none; background:rgba(255,255,255,0.08); color:white; margin-bottom:15px;">
+      </textarea>
+
+      <button onclick="generate()"
+        style="width:100%; padding:12px; border:none; border-radius:10px; background:linear-gradient(135deg,#38bdf8,#0ea5e9); color:white; cursor:pointer;">
+        Generate Diagram
+      </button>
+
+    </div>
+
+    <!-- Canvas Panel -->
+    <div style="flex:1.2; padding:20px; border-radius:20px; background:white;">
+      <canvas id="canvas" width="800" height="450" style="width:100%; border-radius:15px;"></canvas>
+    </div>
+
   </div>
 
   <script src="script.js"></script>
