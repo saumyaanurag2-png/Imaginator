@@ -1,0 +1,13 @@
+function drawProjectile(ctx, text) {
+  ctx.beginPath();
+
+  for (let x = 0; x < 500; x++) {
+    let y = 0.005 * x * x;
+    ctx.lineTo(x + 50, 350 - y);
+  }
+
+  ctx.stroke();
+
+  ctx.font = "16px Arial";
+  ctx.fillText("Projectile Motion", 280, 50);
+}
