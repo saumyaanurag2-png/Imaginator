@@ -1,5 +1,18 @@
-// ================= DIAGRAM =================
+// ================= ANIMATION ENGINE =================
+function animate(drawFn) {
+  let frame = 0;
 
+  function loop() {
+    frame++;
+    drawFn(frame);
+    requestAnimationFrame(loop);
+  }
+
+  loop();
+}
+
+
+// ================= MAIN GENERATE =================
 function generate() {
   const text = document.getElementById("inputText").value.toLowerCase();
   console.log("INPUT:", text);
@@ -11,36 +24,25 @@ function generate() {
   ctx.font = "16px Arial";
   ctx.fillStyle = "black";
 
-  // Stronger detection
-  if (
-    text.includes("incline") ||
-    text.includes("slope") ||
-    (text.includes("block") && text.includes("angle"))
-  ) {
-    console.log("Detected: Incline");
+  if (text.includes("incline") || text.includes("slope")) {
     drawIncline(ctx);
   } 
-  else if (
-    text.includes("projectile") ||
-    text.includes("thrown") ||
-    (text.includes("velocity") && text.includes("angle"))
-  ) {
-    console.log("Detected: Projectile");
-    drawProjectile(ctx);
+  else if (text.includes("projectile") || text.includes("thrown")) {
+    drawProjectileAnimated(ctx, canvas);
   } 
   else if (text.includes("spring")) {
-    console.log("Detected: Spring");
-    drawSpring(ctx);
+    drawSpringAnimated(ctx, canvas);
+  } 
+  else if (text.includes("force") || text.includes("fbd")) {
+    drawFBD(ctx);
   } 
   else {
-    console.log("No match");
     ctx.fillText("Diagram not recognized.", 200, 200);
   }
 }
 
 
-// ================= DRAW FUNCTIONS =================
-
+// ================= INCLINE =================
 function drawIncline(ctx) {
   ctx.beginPath();
   ctx.moveTo(100, 350);
@@ -49,47 +51,86 @@ function drawIncline(ctx) {
   ctx.closePath();
   ctx.stroke();
 
-  // Block
   ctx.fillRect(460, 250, 40, 40);
-
   ctx.fillText("Inclined Plane", 250, 50);
 }
 
 
-function drawProjectile(ctx) {
-  ctx.beginPath();
+// ================= PROJECTILE (ANIMATED) =================
+function drawProjectileAnimated(ctx, canvas) {
+  animate((frame) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  for (let x = 0; x < 400; x++) {
+    ctx.beginPath();
+
+    for (let x = 0; x < frame; x++) {
+      let y = 0.004 * x * x;
+      ctx.lineTo(x + 50, 350 - y);
+    }
+
+    ctx.stroke();
+
+    let x = frame;
     let y = 0.004 * x * x;
-    ctx.lineTo(x + 50, 350 - y);
-  }
 
-  ctx.stroke();
-  ctx.fillText("Projectile Motion", 250, 50);
+    ctx.beginPath();
+    ctx.arc(x + 50, 350 - y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillText("Projectile Motion", 250, 50);
+  });
 }
 
 
-function drawSpring(ctx) {
-  let startX = 120;
-  let y = 220;
+// ================= SPRING (ANIMATED) =================
+function drawSpringAnimated(ctx, canvas) {
+  animate((frame) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let stretch = Math.sin(frame * 0.1) * 20;
+
+    ctx.beginPath();
+
+    for (let i = 0; i < 20; i++) {
+      let x = 120 + i * 15;
+      let offset = (i % 2 === 0 ? -15 : 15) + stretch;
+      ctx.lineTo(x, 220 + offset);
+    }
+
+    ctx.stroke();
+
+    ctx.fillRect(420 + stretch, 200, 50, 50);
+
+    ctx.fillText("Spring Oscillation", 250, 50);
+  });
+}
+
+
+// ================= FREE BODY DIAGRAM =================
+function drawFBD(ctx) {
+  ctx.fillRect(300, 200, 50, 50);
 
   ctx.beginPath();
 
-  for (let i = 0; i < 20; i++) {
-    let x = startX + i * 15;
-    let offset = (i % 2 === 0) ? -15 : 15;
-    ctx.lineTo(x, y + offset);
-  }
+  // weight
+  ctx.moveTo(325, 250);
+  ctx.lineTo(325, 320);
+
+  // normal
+  ctx.moveTo(325, 200);
+  ctx.lineTo(325, 150);
+
+  // friction
+  ctx.moveTo(300, 225);
+  ctx.lineTo(250, 225);
 
   ctx.stroke();
 
-  ctx.fillRect(420, 200, 50, 50);
-  ctx.fillText("Spring System", 250, 50);
+  ctx.fillText("Free Body Diagram", 230, 100);
 }
 
 
 // ================= AI ASSISTANT =================
-
 const API_KEY = "YOUR_OPENAI_API_KEY"; // put your key
 
 async function sendMessage() {
