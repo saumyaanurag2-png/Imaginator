@@ -1,0 +1,20 @@
+function drawSpring(ctx) {
+  let startX = 100;
+  let y = 200;
+
+  ctx.beginPath();
+
+  for (let i = 0; i < 15; i++) {
+    let x = startX + i * 20;
+    let offset = (i % 2 === 0) ? -20 : 20;
+    ctx.lineTo(x, y + offset);
+  }
+
+  ctx.stroke();
+
+  // Block
+  ctx.fillRect(400, 180, 50, 50);
+
+  ctx.font = "16px Arial";
+  ctx.fillText("Spring System", 280, 50);
+}
