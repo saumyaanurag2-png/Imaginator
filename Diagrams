@@ -1,0 +1,90 @@
+// ================= INCLINE =================
+function drawIncline(ctx) {
+  ctx.beginPath();
+  ctx.moveTo(100, 350);
+  ctx.lineTo(500, 350);
+  ctx.lineTo(500, 200);
+  ctx.closePath();
+  ctx.stroke();
+
+  ctx.fillRect(460, 250, 40, 40);
+  ctx.fillText("Inclined Plane", 250, 50);
+}
+
+
+// ================= PROJECTILE (ANIMATED) =================
+function drawProjectileAnimated(ctx, canvas) {
+  animate((frame) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+
+    for (let x = 0; x < frame; x++) {
+      let y = 0.004 * x * x;
+      ctx.lineTo(x + 50, 350 - y);
+    }
+
+    ctx.stroke();
+
+    // moving ball
+    let x = frame;
+    let y = 0.004 * x * x;
+
+    ctx.beginPath();
+    ctx.arc(x + 50, 350 - y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillText("Projectile Motion", 250, 50);
+  });
+}
+
+
+// ================= SPRING (ANIMATED) =================
+function drawSpringAnimated(ctx, canvas) {
+  animate((frame) => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let stretch = Math.sin(frame * 0.1) * 20;
+
+    ctx.beginPath();
+
+    for (let i = 0; i < 20; i++) {
+      let x = 120 + i * 15;
+      let offset = (i % 2 === 0 ? -15 : 15) + stretch;
+      ctx.lineTo(x, 220 + offset);
+    }
+
+    ctx.stroke();
+
+    // block moves
+    ctx.fillRect(420 + stretch, 200, 50, 50);
+
+    ctx.fillText("Spring Oscillation", 250, 50);
+  });
+}
+
+
+// ================= FREE BODY DIAGRAM =================
+function drawFBD(ctx) {
+  // block
+  ctx.fillRect(300, 200, 50, 50);
+
+  // arrows
+  ctx.beginPath();
+
+  // weight
+  ctx.moveTo(325, 250);
+  ctx.lineTo(325, 320);
+
+  // normal
+  ctx.moveTo(325, 200);
+  ctx.lineTo(325, 150);
+
+  // friction
+  ctx.moveTo(300, 225);
+  ctx.lineTo(250, 225);
+
+  ctx.stroke();
+
+  ctx.fillText("FBD", 320, 100);
+}
