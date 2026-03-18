@@ -5,7 +5,16 @@
   <title>DiagramAI</title>
 </head>
 
-<body style="margin:0; font-family:Segoe UI; background:#0f172a; color:white; display:flex; height:100vh;">
+<body <div style="margin-bottom:10px;">
+  Mass: <input id="mass" type="range" min="1" max="10" value="2"><br>
+  Spring k: <input id="k" type="range" min="1" max="20" value="5"><br>
+  Gravity: <input id="g" type="range" min="1" max="20" value="10"><br>
+
+  <button onclick="generate()">Start</button>
+  <button onclick="pauseSim()">Pause</button>
+  <button onclick="resumeSim()">Resume</button>
+  <button onclick="resetSim()">Reset</button>
+</div>>
 
   <!-- MAIN -->
   <div style="flex:1; display:flex; justify-content:center; align-items:center;">
