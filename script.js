@@ -18,7 +18,7 @@ function animate(drawFn) {
 
 // ================= UTILS =================
 
-// Draw arrow with head
+// Arrow
 function drawArrow(ctx, x1, y1, x2, y2, label) {
   const angle = Math.atan2(y2 - y1, x2 - x1);
 
@@ -27,7 +27,6 @@ function drawArrow(ctx, x1, y1, x2, y2, label) {
   ctx.lineTo(x2, y2);
   ctx.stroke();
 
-  // arrow head
   ctx.beginPath();
   ctx.moveTo(x2, y2);
   ctx.lineTo(x2 - 10 * Math.cos(angle - 0.3), y2 - 10 * Math.sin(angle - 0.3));
@@ -35,19 +34,14 @@ function drawArrow(ctx, x1, y1, x2, y2, label) {
   ctx.closePath();
   ctx.fill();
 
-  // label
   if (label) ctx.fillText(label, x2 + 5, y2 + 5);
 }
 
-
-// Draw better block
+// Block
 function drawBlock(ctx, x, y, w, h) {
   ctx.fillStyle = "#3b82f6";
   ctx.fillRect(x, y, w, h);
-
-  ctx.strokeStyle = "black";
   ctx.strokeRect(x, y, w, h);
-
   ctx.fillStyle = "black";
 }
 
@@ -81,7 +75,6 @@ function generate() {
 
 // ================= INCLINE =================
 function drawIncline(ctx) {
-  // slope
   ctx.beginPath();
   ctx.moveTo(100, 350);
   ctx.lineTo(500, 350);
@@ -89,10 +82,8 @@ function drawIncline(ctx) {
   ctx.closePath();
   ctx.stroke();
 
-  // block
   drawBlock(ctx, 440, 250, 50, 50);
 
-  // forces
   drawArrow(ctx, 465, 250, 465, 180, "N");
   drawArrow(ctx, 465, 300, 465, 370, "mg");
   drawArrow(ctx, 440, 275, 380, 275, "f");
@@ -113,7 +104,6 @@ function drawProjectileAnimated(ctx, canvas) {
     let x = 50 + vx * frame;
     let y = 300 + vy * frame + 0.5 * g * frame * frame;
 
-    // trajectory
     ctx.beginPath();
     for (let t = 0; t < frame; t++) {
       let tx = 50 + vx * t;
@@ -122,7 +112,6 @@ function drawProjectileAnimated(ctx, canvas) {
     }
     ctx.stroke();
 
-    // ball
     ctx.beginPath();
     ctx.arc(x, y, 6, 0, Math.PI * 2);
     ctx.fillStyle = "red";
@@ -134,34 +123,49 @@ function drawProjectileAnimated(ctx, canvas) {
 }
 
 
-// ================= SPRING =================
+// ================= PERFECT SPRING =================
 function drawSpringAnimated(ctx, canvas) {
-  let baseX = 120;
   let y = 220;
 
   animate((frame) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // realistic oscillation
-    let stretch = Math.sin(frame * 0.08) * 40 * Math.exp(-frame * 0.005);
+    let stretch = Math.sin(frame * 0.08) * 60 * Math.exp(-frame * 0.003);
 
     // wall
-    ctx.fillRect(80, 180, 20, 80);
+    ctx.fillRect(60, 180, 20, 80);
 
-    // spring
+    let startX = 80;
+
     ctx.beginPath();
-    ctx.moveTo(100, y);
+    ctx.moveTo(startX, y);
 
-    for (let i = 0; i < 15; i++) {
-      let x = 100 + i * 15 + (stretch * i) / 15;
-      let offset = i % 2 === 0 ? -15 : 15;
+    let segments = 20;
+    let length = 250 + stretch;
+
+    let lastX = startX;
+    let lastY = y;
+
+    for (let i = 1; i <= segments; i++) {
+      let x = startX + (i / segments) * length;
+      let offset = (i % 2 === 0 ? -15 : 15);
+
       ctx.lineTo(x, y + offset);
+
+      lastX = x;
+      lastY = y + offset;
     }
 
     ctx.stroke();
 
-    // block ATTACHED properly
-    let blockX = 100 + 15 * 15 + stretch;
+    // connector
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(lastX + 10, y);
+    ctx.stroke();
+
+    // block ATTACHED
+    let blockX = lastX + 10;
     drawBlock(ctx, blockX, y - 25, 50, 50);
 
     ctx.fillText("Spring Oscillation", 240, 50);
@@ -181,7 +185,7 @@ function drawFBD(ctx) {
 }
 
 
-// ================= AI ASSISTANT =================
+// ================= AI =================
 const API_KEY = "YOUR_OPENAI_API_KEY";
 
 async function sendMessage() {
@@ -204,14 +208,8 @@ async function sendMessage() {
       body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
-          {
-            role: "system",
-            content: "Give physics approach and formulas only, concise."
-          },
-          {
-            role: "user",
-            content: userText
-          }
+          { role: "system", content: "Give physics formulas and approach only." },
+          { role: "user", content: userText }
         ]
       })
     });
@@ -222,7 +220,7 @@ async function sendMessage() {
     chatBox.innerHTML += `<div><b>AI:</b> ${reply}</div>`;
     chatBox.scrollTop = chatBox.scrollHeight;
 
-  } catch (err) {
-    chatBox.innerHTML += `<div>Error connecting to AI</div>`;
+  } catch {
+    chatBox.innerHTML += `<div>Error</div>`;
   }
 }
